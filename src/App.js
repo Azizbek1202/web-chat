@@ -1,23 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import io from "socket.io-client";
+import ChatRoom from "./ChatRoom";
 
 function App() {
+  const [message, setMessage] = useState('');
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    // connect to WebSocket server
+    const newSocket = io("http://localhost:8080");
+    setSocket(newSocket);
+
+    newSocket.on('connect', () => {
+      console.log('Connected to server', newSocket.id);
+    });
+
+      newSocket.on('disconnect', () => {
+      console.log('Disconnected from server');
+
+    });
+  }, []);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ChatRoom />
     </div>
   );
 }
